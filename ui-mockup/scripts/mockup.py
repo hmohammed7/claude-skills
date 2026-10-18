@@ -8,6 +8,7 @@ Exit codes: 0 = no failures, 1 = layout failures, 2 = the spec or style can't be
 """
 
 import argparse
+import base64
 import html
 import json
 import math
@@ -33,6 +34,7 @@ TEXT_ALIGNS = {"left": "flex-start", "centre": "center", "right": "flex-end"}  #
 STYLE_COLOURS = {"background", "panel", "button", "text", "outline", "shadow"}
 NAME_PATTERN = re.compile(r"[A-Za-z0-9_-]+")
 HEX_COLOUR = re.compile(r"#[0-9a-fA-F]{6}")
+FONT_TYPES = {".ttf": "font/ttf", ".otf": "font/otf", ".woff2": "font/woff2"}
 EPS = 1e-6
 TEXT_EPS = 0.01
 
@@ -64,6 +66,23 @@ def load_style(path):
             errors.append(f"style '{key}' must be a number, 0 or more")
     if not isinstance(style.get("font"), str):
         errors.append("style 'font' must be a CSS font list, e.g. \"Arial, sans-serif\"")
+    weight = style.setdefault("fontWeight", 700)
+    if not is_number(weight) or not 100 <= weight <= 900:
+        errors.append("style 'fontWeight' must be a number from 100 to 900")
+    style["fontFace"] = ""
+    if "fontFile" in style:  # bundle the font into the page so the mockup doesn't depend on installed fonts
+        font_path = SKILL_DIR / str(style["fontFile"])
+        family = str(style.get("font", "")).split(",")[0].strip().strip("'\"")
+        if not font_path.is_file() or font_path.suffix.lower() not in FONT_TYPES:
+            errors.append(f"style 'fontFile' {style['fontFile']} must be a .ttf, .otf or .woff2 file "
+                          f"(relative to {SKILL_DIR})")
+        elif not family:
+            errors.append("style 'font' must start with the family name of 'fontFile'")
+        else:
+            data = base64.b64encode(font_path.read_bytes()).decode("ascii")
+            style["fontFamily"] = family
+            style["fontFace"] = (f"@font-face {{ font-family: '{family}'; "
+                                 f"src: url(data:{FONT_TYPES[font_path.suffix.lower()]};base64,{data}); }}")
     colours = style.get("colours")
     if not isinstance(colours, dict):
         errors.append("style 'colours' must be an object")
@@ -328,10 +347,10 @@ def element_style(el, depth):
 def build_html(elements, rects, scale, width, height, style):
     c = style["colours"]
     stroke, radius, depth = (style[k] * scale for k in ("stroke", "cornerRadius", "depth"))
-    css = f"""
+    css = f"""{style['fontFace']}
 html, body {{ margin: 0; width: {width}px; height: {height}px; overflow: hidden; background: {c['background']}; }}
 .el {{ position: absolute; box-sizing: border-box; display: flex; align-items: center; justify-content: center; }}
-.el span {{ white-space: pre; flex-shrink: 0; line-height: 1.2; font-family: {style['font']}; font-weight: 700; color: {c['text']}; }}
+.el span {{ white-space: pre; flex-shrink: 0; line-height: 1.2; font-family: {style['font']}; font-weight: {style['fontWeight']}; color: {c['text']}; }}
 .panel {{ background: {c['panel']}; border: {stroke}px solid {c['outline']}; border-radius: {radius}px; }}
 .button {{ background: linear-gradient(to bottom, {lighter(c['button'])}, {c['button']});
           border: {stroke}px solid {c['outline']}; border-radius: {radius}px; box-shadow: 0 {depth}px 0 {c['shadow']}; }}
@@ -370,6 +389,10 @@ MEASURE_TEXT = """() => Array.from(document.querySelectorAll('.el[data-text]')).
   return {id: el.dataset.id, tw: text.width, th: text.height, bw: box.width - bx, bh: box.height - by};
 })"""
 
+LOAD_FONT = """family => document.fonts.load(`16px "${family}"`)
+  .then(faces => faces.length && faces.every(f => f.status === 'loaded') ? 'loaded' : 'no matching font face')
+  .catch(err => String(err))"""
+
 MARK_FAILED = """ids => ids.forEach(id =>
   document.querySelector(`[data-id="${CSS.escape(id)}"]`).classList.add('fail'))"""
 
@@ -401,10 +424,21 @@ def main(argv=None):
         return 2
 
     out_dir = Path(args.project) / "mockups" / name
-    out_dir.mkdir(parents=True, exist_ok=True)
     lines = []
     with sync_playwright() as pw:
         browser = pw.chromium.launch()
+        if style["fontFace"]:  # a font that fails to load would silently fall back and fake every text_fit
+            page = browser.new_page()
+            page.set_content(f"<!doctype html><style>{style['fontFace']}</style>")
+            loaded = page.evaluate(LOAD_FONT, style["fontFamily"])
+            page.close()
+            if loaded != "loaded":
+                browser.close()
+                print(f"ERROR: fix these and run again. Nothing was written.\n"
+                      f"  - style 'fontFile' {style['fontFile']} couldn't be loaded by the browser ({loaded})",
+                      file=sys.stderr)
+                return 2
+        out_dir.mkdir(parents=True, exist_ok=True)
         for width, height in SCREENS:
             rects, scale = layout(elements, width, height)
             rows = check_geometry(elements, rects, scale, width, height)

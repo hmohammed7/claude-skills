@@ -43,8 +43,8 @@ def record(ok, test, expected, got):
     table.append(("PASS" if ok else "FAIL", test, expected, got))
 
 
-def run(spec_path, project):
-    result = subprocess.run([sys.executable, str(SCRIPT), str(spec_path), "--project", str(project)],
+def run(spec_path, project, *extra):
+    result = subprocess.run([sys.executable, str(SCRIPT), str(spec_path), "--project", str(project), *extra],
                             capture_output=True, text=True, encoding="utf-8")
     rows = [m.groups() for m in map(REPORT_LINE.match, result.stdout.splitlines()) if m]
     return result, rows
@@ -167,10 +167,10 @@ with tempfile.TemporaryDirectory() as tmp:
         record(got == wanted, f"edge: {label}", f"{check} {wanted}", f"{check} {got}")
 
     # 4. The real output: textAlign and colour only matter if they show up in the PNG, so read its pixels.
-    def render_1280(name, elements):
+    def render_1280(name, elements, *extra):
         path = Path(tmp) / f"{name}.json"
         path.write_text(json.dumps({"name": name, "elements": elements}), encoding="utf-8")
-        run(path, tmp)
+        run(path, tmp, *extra)
         return Image.open(Path(tmp) / "mockups" / name / f"{name}_1280x720.png").convert("RGB")
 
     def bright_columns(image, left, top, right, bottom):
@@ -208,6 +208,35 @@ with tempfile.TemporaryDirectory() as tmp:
     red = sum(1 for x in range(100, 700) for y in range(100, 160)
               if (lambda p: p[0] > 200 and p[1] < 60 and p[2] < 60)(image.getpixel((x, y))))
     record(red > 50, "render: label text colour", "red text pixels", f"{red} red pixels")
+
+    # 5. The style's font file: a font that can't load must stop the run, and a loaded one must show up.
+    default_style = json.loads((HERE.parent / "styles" / "default.json").read_text(encoding="utf-8"))
+
+    def style_file(name, **changes):
+        style = {**default_style, **changes}
+        path = Path(tmp) / f"{name}.json"
+        path.write_text(json.dumps(style), encoding="utf-8")
+        return str(path)
+
+    broken = Path(tmp) / "broken.ttf"
+    broken.write_bytes(b"this is not a font" * 50)
+    for label_text, style, wanted in [("missing font file", style_file("NoFont", fontFile="fonts/missing.ttf"), "'fontFile'"),
+                                      ("corrupt font file", style_file("BadFont", fontFile=str(broken)), "couldn't be loaded")]:
+        spec = Path(tmp) / "FontSpec.json"
+        spec.write_text(json.dumps({"name": "FontSpec", "elements": label()}), encoding="utf-8")
+        result, _ = run(spec, tmp, "--style", style)
+        wrote = (Path(tmp) / "mockups" / "FontSpec").exists()
+        record(result.returncode == 2 and wanted in result.stderr and not wrote, f"style: {label_text}",
+               f"error: {wanted}, nothing written", f"exit {result.returncode}" + (", wrote files" if wrote else ""))
+
+    # if the bundled font failed, the browser would fall back to Arial at the same weight: pixels would match
+    fallback = {k: v for k, v in default_style.items() if k != "fontFile"}
+    fallback["font"] = "Arial, sans-serif"
+    Path(tmp, "Fallback.json").write_text(json.dumps(fallback), encoding="utf-8")
+    bundled = render_1280("FontDefault", label("left"))
+    plain = render_1280("FontFallback", label("left"), "--style", str(Path(tmp, "Fallback.json")))
+    changed = sum(1 for x in range(100, 700) for y in range(100, 160) if bundled.getpixel((x, y)) != plain.getpixel((x, y)))
+    record(changed > 200, "render: bundled font used", "text pixels differ from Arial fallback", f"{changed} pixels differ")
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")

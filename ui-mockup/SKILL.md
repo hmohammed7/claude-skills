@@ -31,6 +31,9 @@ is scaled by min(width/1280, height/720), like a UIScale.
 
 Look (stroke, corner radius, depth, text size, font, colours) comes from
 `${CLAUDE_SKILL_DIR}/styles/default.json`. Pass `--style other.json` for another look.
+The default font is Fredoka One (Roblox's `Enum.Font.FredokaOne`), bundled in `fonts/` with its licence
+and embedded in the page; `fontFile` and `fontWeight` in the style set it. A font that can't load is an
+error, never a silent switch to Arial, because text_fit would then measure the wrong font.
 For concrete style and shop-layout numbers taken from tutorials (radius, depth, outline, text size,
 item order), read `${CLAUDE_SKILL_DIR}/references/numbers.md`.
 
@@ -83,6 +86,14 @@ item order), read `${CLAUDE_SKILL_DIR}/references/numbers.md`.
 
 The numbers live at the top of `scripts/mockup.py`. Change them there, here and in design.md, then run the tests.
 
+### Shop rules (judgement, no check yet)
+
+Apply these when writing a shop spec, and point out breaks when reviewing one. Source: `references/numbers.md`.
+
+- **The main item comes first and is the biggest card.** Players look at the first, largest thing; a shop of equal cards gives them nowhere to start.
+- **Price buttons are green and show a currency icon (Robux, coin) next to the price.** Green reads as "buy", and the icon makes what it costs clear before the tap. The spec has no image element yet, so put the icon in the label text or note it for roblox-ui.
+- **Button text gets a dark outline.** White text on a bright gradient gets lost without one. The mockup doesn't draw text outlines, so add it when building (UIStroke on the text in roblox-ui).
+
 ## Known problems
 
 Logged here with the date when something can't be fixed straight away. A logged problem is not a
@@ -93,6 +104,6 @@ fixed one: fix these before adding features.
 
 ## Limits
 
-It's a browser mockup, not Roblox: Arial instead of Roblox fonts, no UIListLayout, UIPadding,
+It's a browser mockup, not Roblox: browser text rendering (close to Roblox's FredokaOne, not identical), no text outlines, no UIListLayout, UIPadding,
 constraints, ZIndex or top-bar inset, and children always draw on top of parents. Check the real
 thing in Studio's Device Simulator (roblox-ui).

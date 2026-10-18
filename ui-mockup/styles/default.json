@@ -1,9 +1,11 @@
 {
   "stroke": 3,
   "cornerRadius": 12,
-  "depth": 6,
+  "depth": 10,
   "textSize": 24,
-  "font": "Arial, Helvetica, sans-serif",
+  "font": "'Fredoka One', Arial, sans-serif",
+  "fontFile": "fonts/FredokaOne-Regular.ttf",
+  "fontWeight": 400,
   "colours": {
     "background": "#1b1d23",
     "panel": "#2d3240",
