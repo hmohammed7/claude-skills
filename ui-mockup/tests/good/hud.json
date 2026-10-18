@@ -1,0 +1,16 @@
+{
+  "name": "ObbyHud",
+  "elements": [
+    { "id": "CoinsPanel", "type": "panel", "ox": 16, "oy": 16, "w": 220, "h": 64 },
+    { "id": "CoinsLabel", "type": "label", "parent": "CoinsPanel", "x": 0.5, "y": 0.5, "anchor": [0.5, 0.5], "w": 190, "h": 44,
+      "text": "1,250 coins", "textSize": 28, "centre": true },
+    { "id": "StageLabel", "type": "label", "x": 0.5, "oy": 16, "anchor": [0.5, 0], "w": 260, "h": 48,
+      "text": "Stage 12", "textSize": 36, "centre": "x" },
+    { "id": "MenuButton", "type": "button", "x": 1, "ox": -16, "oy": 16, "anchor": [1, 0], "w": 88, "h": 88,
+      "text": "Menu", "textSize": 22 },
+    { "id": "ShopButton", "type": "button", "x": 1, "y": 1, "ox": -160, "oy": -24, "anchor": [1, 1], "w": 100, "h": 100,
+      "text": "Shop", "textSize": 24 },
+    { "id": "JumpButton", "type": "button", "x": 1, "y": 1, "ox": -24, "oy": -24, "anchor": [1, 1], "w": 120, "h": 120,
+      "text": "Jump", "textSize": 28 }
+  ]
+}

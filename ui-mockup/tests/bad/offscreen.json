@@ -1,0 +1,3 @@
+{ "name": "Offscreen", "elements": [
+  { "id": "SidePanel", "type": "panel", "x": 1, "ox": 20, "oy": 100, "w": 100, "h": 60 }
+] }

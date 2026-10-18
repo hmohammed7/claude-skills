@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+mockups/
+output/
+outputs/
+# Managed by the Claude app, overwritten on sync
+synced/

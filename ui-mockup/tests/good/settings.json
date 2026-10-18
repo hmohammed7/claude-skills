@@ -1,0 +1,28 @@
+{
+  "name": "SettingsMenu",
+  "elements": [
+    { "id": "SettingsPanel", "type": "panel", "x": 0.5, "y": 0.5, "anchor": [0.5, 0.5], "w": 640, "h": 520, "centre": true },
+    { "id": "Title", "type": "label", "parent": "SettingsPanel", "x": 0.5, "oy": 20, "anchor": [0.5, 0], "w": 300, "h": 56,
+      "text": "Settings", "textSize": 40, "centre": "x" },
+    { "id": "CloseButton", "type": "button", "parent": "SettingsPanel", "x": 1, "ox": -16, "oy": 16, "anchor": [1, 0],
+      "w": 88, "h": 88, "text": "X", "textSize": 36 },
+
+    { "id": "MusicRow", "type": "panel", "parent": "SettingsPanel", "x": 0.5, "oy": 120, "anchor": [0.5, 0], "w": 560, "h": 96, "centre": "x" },
+    { "id": "MusicLabel", "type": "label", "parent": "MusicRow", "y": 0.5, "ox": 24, "anchor": [0, 0.5], "w": 300, "h": 48,
+      "text": "Music", "textSize": 28, "textAlign": "left" },
+    { "id": "MusicToggle", "type": "button", "parent": "MusicRow", "x": 1, "y": 0.5, "ox": -24, "anchor": [1, 0.5], "w": 140, "h": 88,
+      "text": "On", "textSize": 28 },
+
+    { "id": "SfxRow", "type": "panel", "parent": "SettingsPanel", "x": 0.5, "oy": 228, "anchor": [0.5, 0], "w": 560, "h": 96, "centre": "x" },
+    { "id": "SfxLabel", "type": "label", "parent": "SfxRow", "y": 0.5, "ox": 24, "anchor": [0, 0.5], "w": 300, "h": 48,
+      "text": "Sound effects", "textSize": 28, "textAlign": "left" },
+    { "id": "SfxToggle", "type": "button", "parent": "SfxRow", "x": 1, "y": 0.5, "ox": -24, "anchor": [1, 0.5], "w": 140, "h": 88,
+      "text": "On", "textSize": 28 },
+
+    { "id": "ShadowsRow", "type": "panel", "parent": "SettingsPanel", "x": 0.5, "oy": 336, "anchor": [0.5, 0], "w": 560, "h": 96, "centre": "x" },
+    { "id": "ShadowsLabel", "type": "label", "parent": "ShadowsRow", "y": 0.5, "ox": 24, "anchor": [0, 0.5], "w": 300, "h": 48,
+      "text": "Shadows", "textSize": 28, "textAlign": "left" },
+    { "id": "ShadowsToggle", "type": "button", "parent": "ShadowsRow", "x": 1, "y": 0.5, "ox": -24, "anchor": [1, 0.5], "w": 140, "h": 88,
+      "text": "Off", "textSize": 28, "colour": "#6b7280" }
+  ]
+}

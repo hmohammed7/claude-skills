@@ -1,0 +1,3 @@
+{ "name": "SmallButton", "elements": [
+  { "id": "OkButton", "type": "button", "ox": 100, "oy": 100, "w": 60, "h": 60, "text": "OK", "textSize": 20 }
+] }

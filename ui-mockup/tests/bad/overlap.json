@@ -1,0 +1,4 @@
+{ "name": "Overlap", "elements": [
+  { "id": "PanelA", "type": "panel", "ox": 100, "oy": 100, "w": 200, "h": 120 },
+  { "id": "PanelB", "type": "panel", "ox": 250, "oy": 150, "w": 200, "h": 120 }
+] }

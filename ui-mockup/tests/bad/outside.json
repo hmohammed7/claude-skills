@@ -1,0 +1,4 @@
+{ "name": "Outside", "elements": [
+  { "id": "Box", "type": "panel", "ox": 100, "oy": 100, "w": 300, "h": 200 },
+  { "id": "Escapee", "type": "panel", "parent": "Box", "x": 1, "ox": -40, "oy": 20, "w": 100, "h": 60 }
+] }

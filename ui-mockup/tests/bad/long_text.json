@@ -1,0 +1,3 @@
+{ "name": "LongText", "elements": [
+  { "id": "PriceLabel", "type": "label", "ox": 100, "oy": 100, "w": 120, "h": 40, "text": "Buy all the coins now", "textSize": 28 }
+] }

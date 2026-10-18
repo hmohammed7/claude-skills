@@ -1,0 +1,3 @@
+{ "name": "BadParent", "elements": [
+  { "id": "Orphan", "type": "panel", "parent": "Ghost", "w": 100, "h": 60 }
+] }

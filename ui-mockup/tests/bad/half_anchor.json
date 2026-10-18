@@ -1,0 +1,3 @@
+{ "name": "HalfAnchor", "elements": [
+  { "id": "Title", "type": "label", "x": 0.5, "oy": 100, "w": 300, "h": 60, "text": "Shop", "textSize": 32, "centre": "x" }
+] }

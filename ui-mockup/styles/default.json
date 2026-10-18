@@ -1,0 +1,15 @@
+{
+  "stroke": 3,
+  "cornerRadius": 12,
+  "depth": 6,
+  "textSize": 24,
+  "font": "Arial, Helvetica, sans-serif",
+  "colours": {
+    "background": "#1b1d23",
+    "panel": "#2d3240",
+    "button": "#2fb24c",
+    "text": "#ffffff",
+    "outline": "#0f1115",
+    "shadow": "#16592a"
+  }
+}
