@@ -6,7 +6,7 @@
       "text": "1,250 coins", "textSize": 28, "centre": true },
     { "id": "StageLabel", "type": "label", "x": 0.5, "oy": 16, "anchor": [0.5, 0], "w": 260, "h": 48,
       "text": "Stage 12", "textSize": 36, "centre": "x" },
-    { "id": "MenuButton", "type": "button", "x": 1, "ox": -16, "oy": 16, "anchor": [1, 0], "w": 88, "h": 88,
+    { "id": "MenuButton", "type": "button", "x": 1, "ox": -16, "oy": 16, "anchor": [1, 0], "w": 96, "h": 96,
       "text": "Menu", "textSize": 22 },
     { "id": "ShopButton", "type": "button", "x": 1, "y": 1, "ox": -160, "oy": -24, "anchor": [1, 1], "w": 100, "h": 100,
       "text": "Shop", "textSize": 24 },

@@ -19,7 +19,7 @@ is scaled by min(width/1280, height/720), like a UIScale.
   "elements": [
     { "id": "Panel", "type": "panel", "x": 0.5, "y": 0.5, "anchor": [0.5, 0.5], "w": 760, "h": 480, "centre": true },
     { "id": "Buy", "type": "button", "parent": "Panel", "x": 0.5, "y": 1, "oy": -16, "anchor": [0.5, 1],
-      "w": 160, "h": 88, "text": "Buy", "textSize": 28, "centre": "x" } ] }
+      "w": 160, "h": 96, "text": "Buy", "textSize": 28, "centre": "x" } ] }
 ```
 
 - `type`: `panel`, `button` or `label`. Only buttons and labels have `text`.
@@ -68,7 +68,7 @@ Look (stroke, corner radius, depth, text size, font, colours) comes from
 
 | Rule | Reason |
 |---|---|
-| `touch_target`: buttons at least 88x88 at 1280x720 (44x44 on a 640x360 phone) | 44pt is the smallest target a finger hits reliably |
+| `touch_target`: buttons at least 96x96 at 1280x720 (48x48 on a 640x360 phone) | Google's minimum is 48x48dp and Apple's 44x44pt; Roblox UI pixels act like points/dp on phones, so 96 meets both on 640x360 and 667x375 (brain RES-2026-001). Bottom-edge buttons need more (~12mm) |
 | `overlap`: siblings never overlap, unless one has `overhang: true` | Overlaps hide content and steal taps; overhang marks the deliberate ones |
 | `gap`: siblings at least 8px apart at 1280x720 (warning) | Touching things look cramped and cause mis-taps |
 | `corner_clear`: a button pinned to its parent's corner (close, back) is at least 24px from every sibling at 1280x720 | The 8px minimum is for elements in a row; a corner button 10px from a tile passes it and still looks cramped |

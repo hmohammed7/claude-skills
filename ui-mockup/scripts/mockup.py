@@ -20,7 +20,7 @@ SKILL_DIR = Path(__file__).resolve().parent.parent
 # ---- Rules: change the numbers here, then update SKILL.md and design.md to match ----
 REF_W, REF_H = 1280, 720          # sizes and offsets in the spec are pixels at this size
 SCREENS = [(640, 360), (896, 414), (1024, 768), (1280, 720), (1920, 1080)]
-TOUCH_MIN = 88                    # button minimum, reference pixels
+TOUCH_MIN = 96                    # button minimum, reference pixels (48dp on a 640x360 phone, RES-2026-001)
 GAP_MIN = 8                       # sibling gap, reference pixels (warning only)
 CORNER_CLEAR = 24                 # corner button (close, back) to every sibling, reference pixels
 CENTRE_TOLERANCE = 1.5            # pixels on screen

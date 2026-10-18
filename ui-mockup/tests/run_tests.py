@@ -114,8 +114,8 @@ with tempfile.TemporaryDirectory() as tmp:
     box = panel("Box", 100, 100, 300, 300)
 
     def corner(gap):  # close button in Box's top-right corner, a tile `gap` px below it
-        return [box, {"id": "X", "type": "button", "parent": "Box", "x": 1, "anchor": [1, 0], "w": 88, "h": 88},
-                {"id": "T", "type": "panel", "parent": "Box", "x": 1, "oy": 88 + gap, "anchor": [1, 0], "w": 100, "h": 50}]
+        return [box, {"id": "X", "type": "button", "parent": "Box", "x": 1, "anchor": [1, 0], "w": 96, "h": 96},
+                {"id": "T", "type": "panel", "parent": "Box", "x": 1, "oy": 96 + gap, "anchor": [1, 0], "w": 100, "h": 50}]
 
     edges = [
         ("gap 8px", "gap", "A", "PASS", [panel("A", 100, 100), panel("B", 208, 100)]),
@@ -127,8 +127,8 @@ with tempfile.TemporaryDirectory() as tmp:
          [{"id": "A", "type": "panel", "x": 0.5, "ox": 1.5, "anchor": [0.5, 0], "w": 100, "h": 100, "centre": "x"}]),
         ("2px off centre", "off_centre", "A", "FAIL",
          [{"id": "A", "type": "panel", "x": 0.5, "ox": 2, "anchor": [0.5, 0], "w": 100, "h": 100, "centre": "x"}]),
-        ("88x88 button", "touch_target", "A", "PASS", [{"id": "A", "type": "button", "ox": 100, "oy": 100, "w": 88, "h": 88}]),
-        ("87x88 button", "touch_target", "A", "FAIL", [{"id": "A", "type": "button", "ox": 100, "oy": 100, "w": 87, "h": 88}]),
+        ("96x96 button", "touch_target", "A", "PASS", [{"id": "A", "type": "button", "ox": 100, "oy": 100, "w": 96, "h": 96}]),
+        ("95x96 button", "touch_target", "A", "FAIL", [{"id": "A", "type": "button", "ox": 100, "oy": 100, "w": 95, "h": 96}]),
         ("child on parent edge", "outside_parent", "C", "PASS",
          [box, {"id": "C", "type": "panel", "parent": "Box", "x": 1, "anchor": [1, 0], "w": 50, "h": 50}]),
         ("child 1px past parent", "outside_parent", "C", "FAIL",
@@ -138,8 +138,8 @@ with tempfile.TemporaryDirectory() as tmp:
         ("corner button 24px clear", "corner_clear", "X", "PASS", corner(24)),
         ("corner button 23px clear", "corner_clear", "X", "FAIL", corner(23)),
         ("button not in a corner", "corner_clear", "X", "no line",
-         [box, {"id": "X", "type": "button", "parent": "Box", "x": 0.5, "anchor": [0.5, 0], "w": 88, "h": 88},
-          {"id": "T", "type": "panel", "parent": "Box", "oy": 98, "w": 50, "h": 50}]),
+         [box, {"id": "X", "type": "button", "parent": "Box", "x": 0.5, "anchor": [0.5, 0], "w": 96, "h": 96},
+          {"id": "T", "type": "panel", "parent": "Box", "oy": 106, "w": 50, "h": 50}]),
         ("on the screen edge", "off_screen", "A", "PASS", [{"id": "A", "type": "panel", "x": 1, "anchor": [1, 0], "w": 100, "h": 100}]),
         ("1px past the screen", "off_screen", "A", "FAIL",
          [{"id": "A", "type": "panel", "x": 1, "ox": 1, "anchor": [1, 0], "w": 100, "h": 100}]),
