@@ -31,6 +31,8 @@ is scaled by min(width/1280, height/720), like a UIScale.
 
 Look (stroke, corner radius, depth, text size, font, colours) comes from
 `${CLAUDE_SKILL_DIR}/styles/default.json`. Pass `--style other.json` for another look.
+For concrete style and shop-layout numbers taken from tutorials (radius, depth, outline, text size,
+item order), read `${CLAUDE_SKILL_DIR}/references/numbers.md`.
 
 ## Workflow
 
