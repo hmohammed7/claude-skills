@@ -22,6 +22,7 @@ REF_W, REF_H = 1280, 720          # sizes and offsets in the spec are pixels at 
 SCREENS = [(640, 360), (896, 414), (1024, 768), (1280, 720), (1920, 1080)]
 TOUCH_MIN = 88                    # button minimum, reference pixels
 GAP_MIN = 8                       # sibling gap, reference pixels (warning only)
+CORNER_CLEAR = 24                 # corner button (close, back) to every sibling, reference pixels
 CENTRE_TOLERANCE = 1.5            # pixels on screen
 
 TYPES = {"panel", "button", "label"}
@@ -203,6 +204,12 @@ def sticking_out(inner, outer):
     return [f"{side} by {fmt(amount)}px" for side, amount in sides if amount > EPS]
 
 
+def is_corner_button(el):
+    """A button pinned to a corner of its parent, like a close or back button."""
+    return (el["type"] == "button" and el["parent"] is not None
+            and all(el["anchor"][i] in (0, 1) and el["xy"[i]] == el["anchor"][i] for i in (0, 1)))
+
+
 def check_geometry(elements, rects, scale, width, height):
     """Every check except text_fit. Returns {element id: [(status, check, detail), ...]}."""
     rows = {el["id"]: [] for el in elements}
@@ -254,6 +261,12 @@ def check_geometry(elements, rects, scale, width, height):
             if nearest and not any_close:
                 add("PASS", "gap", f"{eid} nearest sibling {nearest[0]} gap {fmt(nearest[1])}px, "
                                    f"min {fmt(gap_min)}px here")
+            if is_corner_button(el):
+                corner_min = CORNER_CLEAR * scale
+                ok = not any_overlap and nearest[1] >= corner_min - EPS
+                closest = "overlaps a sibling" if any_overlap else f"nearest sibling {nearest[0]} gap {fmt(nearest[1])}px"
+                add("PASS" if ok else "FAIL", "corner_clear",
+                    f"{eid} is a corner button, {closest}, min {fmt(corner_min)}px here ({CORNER_CLEAR} at 1280x720)")
 
         if el["centre"]:
             parent = rects[el["parent"]] if el["parent"] else screen

@@ -1,0 +1,6 @@
+{ "name": "CrampedCorner", "elements": [
+  { "id": "ShopPanel", "type": "panel", "x": 0.5, "y": 0.5, "anchor": [0.5, 0.5], "w": 760, "h": 480 },
+  { "id": "CloseButton", "type": "button", "parent": "ShopPanel", "x": 1, "ox": -16, "oy": 16, "anchor": [1, 0],
+    "w": 88, "h": 88, "text": "X", "textSize": 36 },
+  { "id": "TrailCard", "type": "panel", "parent": "ShopPanel", "x": 1, "ox": -16, "oy": 114, "anchor": [1, 0], "w": 210, "h": 300 }
+] }

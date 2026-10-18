@@ -50,6 +50,8 @@ Look (stroke, corner radius, depth, text size, font, colours) comes from
    "does this look right on a phone?". Open the 640x360 PNG with Read and look for: text too small to
    read, labels that don't line up, states you can't tell apart (On and Off the same colour), cramped
    or empty areas, weak hierarchy. Then the 1920x1080 PNG for text that's tiny inside big buttons.
+   **If the report says 0 failures and the image looks wrong, the image is right.** Don't explain it
+   away: fix the spec, then find what the checker isn't measuring and make it a check (or a rule).
 6. **Show the user** the phone and desktop PNGs and the report's last two lines. Ask them to look once.
 
 ## Gates (all must pass before "done")
@@ -69,6 +71,7 @@ Look (stroke, corner radius, depth, text size, font, colours) comes from
 | `touch_target`: buttons at least 88x88 at 1280x720 (44x44 on a 640x360 phone) | 44pt is the smallest target a finger hits reliably |
 | `overlap`: siblings never overlap, unless one has `overhang: true` | Overlaps hide content and steal taps; overhang marks the deliberate ones |
 | `gap`: siblings at least 8px apart at 1280x720 (warning) | Touching things look cramped and cause mis-taps |
+| `corner_clear`: a button pinned to its parent's corner (close, back) is at least 24px from every sibling at 1280x720 | The 8px minimum is for elements in a row; a corner button 10px from a tile passes it and still looks cramped |
 | `off_centre`: `centre` elements within 1.5px of the parent's centre | Off by a few pixels looks amateur, and eyes miss it while a script doesn't |
 | `outside_parent`: children stay inside their parent unless `overhang: true` | Roblox clips or misplaces them, and it usually means a wrong anchor |
 | `off_screen`: nothing sticks out of the screen | Players can't see or tap it |
@@ -77,6 +80,14 @@ Look (stroke, corner radius, depth, text size, font, colours) comes from
 | Never loosen a rule to make a failure go away | A pass from loosened rules proves nothing |
 
 The numbers live at the top of `scripts/mockup.py`. Change them there, here and in design.md, then run the tests.
+
+## Known problems
+
+Logged here with the date when something can't be fixed straight away. A logged problem is not a
+fixed one: fix these before adding features.
+
+- 2026-10-18: gap checks (`gap`, `corner_clear`) measure the box, not the button's drop shadow
+  (`depth` in the style), so a gap under a button looks `depth` px smaller than the report says.
 
 ## Limits
 

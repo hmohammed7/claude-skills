@@ -31,6 +31,7 @@ EXPECTED_BAD = {
     "outside.json": ("fail", "outside_parent", None),
     "offscreen.json": ("fail", "off_screen", None),
     "long_text.json": ("fail", "text_fit", None),
+    "cramped_corner.json": ("fail", "corner_clear", None),
     "empty.json": ("error", "the spec is empty", None),
     "bad_parent.json": ("error", "parent 'Ghost' doesn't exist", None),
 }
@@ -111,6 +112,11 @@ with tempfile.TemporaryDirectory() as tmp:
         return {"id": eid, "type": "panel", "ox": ox, "oy": oy, "w": w, "h": h, **extra}
 
     box = panel("Box", 100, 100, 300, 300)
+
+    def corner(gap):  # close button in Box's top-right corner, a tile `gap` px below it
+        return [box, {"id": "X", "type": "button", "parent": "Box", "x": 1, "anchor": [1, 0], "w": 88, "h": 88},
+                {"id": "T", "type": "panel", "parent": "Box", "x": 1, "oy": 88 + gap, "anchor": [1, 0], "w": 100, "h": 50}]
+
     edges = [
         ("gap 8px", "gap", "A", "PASS", [panel("A", 100, 100), panel("B", 208, 100)]),
         ("gap 7px", "gap", "A", "WARN", [panel("A", 100, 100), panel("B", 207, 100)]),
@@ -129,6 +135,11 @@ with tempfile.TemporaryDirectory() as tmp:
          [box, {"id": "C", "type": "panel", "parent": "Box", "x": 1, "ox": 1, "anchor": [1, 0], "w": 50, "h": 50}]),
         ("child past parent + overhang", "outside_parent", "C", "PASS",
          [box, {"id": "C", "type": "panel", "parent": "Box", "x": 1, "anchor": [0.5, 0.5], "w": 50, "h": 50, "overhang": True}]),
+        ("corner button 24px clear", "corner_clear", "X", "PASS", corner(24)),
+        ("corner button 23px clear", "corner_clear", "X", "FAIL", corner(23)),
+        ("button not in a corner", "corner_clear", "X", "no line",
+         [box, {"id": "X", "type": "button", "parent": "Box", "x": 0.5, "anchor": [0.5, 0], "w": 88, "h": 88},
+          {"id": "T", "type": "panel", "parent": "Box", "oy": 98, "w": 50, "h": 50}]),
         ("on the screen edge", "off_screen", "A", "PASS", [{"id": "A", "type": "panel", "x": 1, "anchor": [1, 0], "w": 100, "h": 100}]),
         ("1px past the screen", "off_screen", "A", "FAIL",
          [{"id": "A", "type": "panel", "x": 1, "ox": 1, "anchor": [1, 0], "w": 100, "h": 100}]),
