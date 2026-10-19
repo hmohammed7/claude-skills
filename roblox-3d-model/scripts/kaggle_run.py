@@ -453,9 +453,10 @@ def main() -> int:
     ap.add_argument("--manifest", default=str(HERE.parent / "references" / "example-manifest.json"),
                     help="images mode only: where the prompts come from")
     ap.add_argument("--seed", type=int, default=900, help="images mode only")
-    ap.add_argument("--accelerator", default="gpu-t4x2",
-                    help="Kaggle machine_shape. gpu-t4x2 is sm_75 and works; "
-                         "gpu-p100 is sm_60 and is NOT supported by Kaggle's own torch")
+    ap.add_argument("--accelerator", default="NvidiaTeslaT4",
+                    help="Kaggle machine_shape, as Kaggle's docs name it. NvidiaTeslaT4 "
+                         "is sm_75 and works (proven 2026-10-18); NvidiaTeslaP100 is "
+                         "sm_60 and is NOT supported by Kaggle's own torch")
     ap.add_argument("--only", default=None, help="comma-separated asset names")
     ap.add_argument("--settle", type=int, default=90,
                     help="seconds to wait after the dataset push before queueing the "
