@@ -429,7 +429,7 @@ the tie is declared.
 | MeshPart is **covered in black blotches** | the texture rows were flipped. Blender row 0 is the bottom and Roblox buffer row 0 is the top, but Roblox UV v also runs from the top, so the conventions **cancel**. Write the array as-is. Two wrong diagnoses came first (texture resolution, then the UV dedupe) and both were fine |
 | "I need an Open Cloud key to get a mesh in" | you do not, for iteration. `AssetService:CreateMeshPartAsync` works from plugin context in edit mode with no credentials. You need a key only for a PERMANENT asset |
 | Asset vanishes after saving the place | expected. `MeshContent`/`TextureContent` are `ContentSourceType.Object` with a nil `Uri`, so they are session-local. Right-click **Save to Roblox** on the MeshPart, or upload |
-| `HttpService:GetAsync` assumed unavailable because `HttpEnabled` is false | that setting governs game scripts. Plugin context ignores it |
+| `HttpService:GetAsync` refused from the Studio MCP's `execute_luau` ("Http requests are not enabled") | measured 2026-10-18: it needs `HttpEnabled` on. `studio_import.lua` turns it on for the fetch and restores it after |
 | Model sits half inside the ground | `CFrame.new(0, size.Y/2, 0)` assumes the baseplate top is at Y=0. Read it off the Baseplate instead |
 
 

@@ -485,9 +485,10 @@ triangles and a 1024x1024 texture.
 
 **Three things that were unknown and are now measured:**
 
-- **`HttpService:GetAsync` works from plugin context with
-  `HttpService.HttpEnabled = false`.** That setting governs game scripts, not
-  plugins. This is what makes the whole route possible.
+- **`HttpService.HttpEnabled` must be ON for the fetch.** It was not needed when
+  this route was first measured (2026-08-26), but on 2026-10-18 the Studio MCP's
+  `execute_luau` was refused with it off. `studio_import.lua` now turns it on for
+  the fetch and restores the previous value afterwards, even if the import errors.
 - **`GetAsync` is byte-exact on a binary body.** A 251,532-byte blob arrived
   intact, so `buffer.fromstring(body)` reads it directly: no base64, no JSON,
   and no giant literal pasted into a script.
@@ -500,6 +501,10 @@ objects, not asset URIs, so **they will not survive saving or publishing the
 place.** This route is for building, iterating and looking at the thing in
 engine. Making an asset permanent still needs an upload, or Studio's own
 right-click **Save to Roblox** on the resulting MeshPart.
+
+**It is also Edit-mode only.** Measured 2026-10-18: press Play and the MeshPart
+is still there, but its mesh and texture are blank. For anything that has to work
+in a playtest or the live game, use the free Open Cloud upload instead.
 
 **Two traps, both of which produce a confidently wrong model:**
 

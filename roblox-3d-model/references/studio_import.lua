@@ -16,8 +16,10 @@
 -- EditableImage from raw data and hand back a real MeshPart, all in process.
 --
 -- MEASURED FACTS worth keeping:
---   * HttpService:GetAsync WORKS FROM PLUGIN CONTEXT even with
---     HttpService.HttpEnabled = false. That setting governs game scripts.
+--   * HttpService.HttpEnabled MUST BE ON for the fetch. Measured 2026-08-26 it
+--     was not needed; MEASURED 2026-10-18 the Studio MCP's execute_luau is
+--     refused ("Http requests are not enabled") with it off. importAll() turns
+--     it on for the fetch and puts the old value back afterwards, even on error.
 --   * GetAsync is BYTE-EXACT on binary bodies. A 251,532 byte blob arrived
 --     intact, so buffer.fromstring(body) needs no base64 and no JSON.
 --   * CreateMeshPartAsync IS permitted from plugin context in edit mode. That
@@ -29,6 +31,12 @@
 -- route is for building, iterating and looking. To make an asset permanent you
 -- still need an upload, or Studio's own right-click "Save to Roblox" on the
 -- resulting MeshPart.
+--
+-- AND IT IS EDIT-MODE ONLY. MEASURED 2026-10-18: press Play and the MeshPart is
+-- still there but its mesh and texture are blank, because the session-local
+-- objects do not replicate into the play session. Fine for looking at a model
+-- in Edit; for anything that has to work in a playtest or the live game, use
+-- the free Open Cloud upload (upload_asset.py).
 
 local HttpService = game:GetService("HttpService")
 local AssetService = game:GetService("AssetService")
@@ -98,7 +106,7 @@ end
 
 local ASSETS = { "pig" }   -- edit this line, then paste the whole file into execute_luau
 
-local function importAll(names: { string }): string
+local function importAllInner(names: { string }): string
 	local folder = workspace:FindFirstChild(FOLDER_NAME)
 	if folder then
 		folder:Destroy()
@@ -123,6 +131,18 @@ local function importAll(names: { string }): string
 			part.Name, tris, n, n, tostring(part.Size)))
 	end
 	return table.concat(report, " | ")
+end
+
+local function importAll(names: { string }): string
+	-- execute_luau's GetAsync needs HttpEnabled; restore the user's setting after.
+	local wasEnabled = HttpService.HttpEnabled
+	HttpService.HttpEnabled = true
+	local ok, result = pcall(importAllInner, names)
+	HttpService.HttpEnabled = wasEnabled
+	if not ok then
+		error(result, 0)
+	end
+	return result
 end
 
 return importAll(ASSETS)
