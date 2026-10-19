@@ -93,7 +93,8 @@ def main() -> int:
               "floor, which is a handful of seconds per day. Expect to be refused.")
 
     print(f"[hi3dgen] connecting to {args.space}")
-    client = Client(args.space, hf_token=token)
+    # gradio_client 2.x renamed hf_token= to token= (hf_token is a TypeError now).
+    client = Client(args.space, token=token)
     api_name, fn_index = find_endpoint(client)
     print(f"[hi3dgen] endpoint api_name={api_name} fn_index={fn_index}")
 
