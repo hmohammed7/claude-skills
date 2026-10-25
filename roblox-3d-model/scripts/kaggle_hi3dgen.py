@@ -70,17 +70,24 @@ os.environ.setdefault("SPCONV_DISABLE_JIT", "1")
 # Matches the Hi3DGen Space's requirements.txt, minus the torch/torchvision pins
 # (see the gotcha above) and minus gradio/spaces, which only the demo UI needs.
 PACKAGES = [
-    # numpy 1.x because the REPO's requirements.txt pins numpy==1.26.4 while the
-    # Space's omits it, and Kaggle ships 2.x. Kept as correctness, NOT as the fix
-    # for the ninja failure - it was tried as that theory and changed nothing.
-    # The ninja failure was cumm's editable-install misdetection; see the
-    # CUMM_DISABLE_JIT note at the top.
-    "numpy==1.26.4",
+    # NO numpy PIN. The repo's requirements.txt says numpy==1.26.4, but MEASURED
+    # 2026-10-18: Kaggle moved to Python 3.13 + torch 2.11, numpy 1.26.4 has no
+    # cp313 wheel (pip builds it from source and breaks two dozen preinstalled
+    # packages that need numpy>=2), and the session torch is built against 2.x.
+    # write_constraints() freezes whatever numpy the session ships instead.
+    # Likewise rembg 2.0.60, xatlas 0.0.9 and pymeshfix 0.17.0 have no py3.13
+    # build, and pyvista 0.44.2 needs vtk<9.4, which has none either; the pins
+    # below are the nearest versions that do. CHECK THE WHOLE SET, NOT EACH PIN:
+    # the vtk failure was a dependency and cost a Kaggle run. Resolve it locally
+    # first with pip install --dry-run --ignore-installed --target x
+    # --python-version 3.13 --platform manylinux_2_28_x86_64 --only-binary=:all:
+    # -c <the constraints.txt the last Kaggle log printed> <PACKAGES>.
+    # scipy is unpinned because 1.14.1 caps numpy<2.3, below the session numpy.
     "huggingface-hub", "diffusers==0.35.0", "accelerate==1.2.1", "kornia==0.8.0",
     "timm", "pillow==10.4.0", "imageio==2.36.1", "imageio-ffmpeg==0.5.1",
-    "easydict==1.13", "opencv-python-headless==4.10.0.84", "scipy==1.14.1",
-    "rembg==2.0.60", "onnxruntime==1.20.1", "trimesh==4.5.3", "xatlas==0.0.9",
-    "pyvista==0.44.2", "pymeshfix==0.17.0", "igraph==0.11.8",
+    "easydict==1.13", "opencv-python-headless==4.10.0.84", "scipy",
+    "rembg==2.0.62", "onnxruntime==1.20.1", "trimesh==4.5.3", "xatlas==0.0.10",
+    "pyvista==0.45.0", "pymeshfix==0.17.1", "igraph==0.11.8",
     "transformers==4.46.3", "einops",
     # xformers is NOT optional and NOT here - it is installed separately by
     # xformers_pin() so its version can be matched to the torch that survived the
@@ -206,7 +213,7 @@ def write_constraints() -> str:
     code = (
         "import json, importlib\n"
         "out = {}\n"
-        "for n in ('torch', 'torchvision', 'torchaudio'):\n"
+        "for n in ('numpy', 'torch', 'torchvision', 'torchaudio'):\n"
         "    try:\n"
         "        out[n] = importlib.import_module(n).__version__.split('+')[0]\n"
         "    except Exception:\n"
@@ -215,7 +222,8 @@ def write_constraints() -> str:
     )
     r = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True)
     found = json.loads(r.stdout.strip().splitlines()[-1]) if r.returncode == 0 else {}
-    pins = ["numpy==1.26.4"] + [f"{n}=={v}" for n, v in found.items()]
+    # numpy is frozen at the session's own version, not downgraded: see PACKAGES.
+    pins = [f"{n}=={v}" for n, v in found.items()]
     path = "/kaggle/working/constraints.txt"
     Path(path).write_text(chr(10).join(pins) + chr(10))
     print(f"[pip] constraints: {pins}", flush=True)
@@ -230,7 +238,9 @@ def xformers_pin() -> str:
     then crashes on a symbol mismatch.
     """
     base = torch_info().get("version", "").split("+")[0]
-    known = {"2.5.1": "0.0.28.post3", "2.4.0": "0.0.27.post2", "2.6.0": "0.0.29.post3"}
+    # 0.0.35 requires torch>=2.10 (stable ABI) rather than one exact version.
+    known = {"2.5.1": "0.0.28.post3", "2.4.0": "0.0.27.post2", "2.6.0": "0.0.29.post3",
+             "2.10.0": "0.0.34", "2.11.0": "0.0.35"}
     pin = known.get(base)
     if pin:
         print(f"[pip] torch {base} -> xformers {pin}", flush=True)
