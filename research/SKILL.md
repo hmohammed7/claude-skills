@@ -1,6 +1,6 @@
 ---
 name: research
-description: Research, look into, compare, fact-check or "figure out" anything that needs outside facts - and run it before any build task that depends on outside facts, like an API's real limits, a tool's real behaviour or a licence's real wording. Use when I say "research X", "look into X", "compare X and Y", "is it true that...", "fact-check this", "figure out whether...", "check the docs for...", or when a paper or citation needs verifying. Not for questions answerable from my own files, code or brain vault (search those instead).
+description: Research, look into, compare, fact-check or "figure out" anything that needs outside facts - and run it before any build task that depends on outside facts, like an API's real limits, a tool's real behaviour or a licence's real wording. Use when I say "research X", "look into X", "compare X and Y", "is it true that...", "fact-check this", "figure out whether...", "check the docs for...", or when a paper or citation needs verifying. Not for questions answerable from my own files or code (search those instead).
 ---
 
 # Research
@@ -13,9 +13,9 @@ can be short, and honest when it has to be long.
 Before the first search, write one line: **"This feeds: <the decision>"**
 (e.g. "This feeds: whether the Obby leaderboard can use OrderedDataStore without hitting limits").
 
-- **No decision?** Give a short answer from 1-3 searches, still following the four rules, and save
-  nothing. Say "No decision named, so this is a quick answer and nothing was saved."
-- If the decision depends on my own files, code or brain, check those first; outside research only
+- **No decision?** Give a short answer from 1-3 searches, still following the four rules. Say
+  "No decision named, so this is a quick answer."
+- If the decision depends on my own files or code, check those first; outside research only
   fills what they can't answer.
 
 ## Gate 2: choose a depth and say which
@@ -53,7 +53,6 @@ evidence turns out messier than expected, say you're moving up a depth and why.
    opened source or be marked as inference; any "confirmed" claim must have 2+ independent origins.
    Fix anything that fails.
 5. Write the report (format below).
-6. Save a note only if the save rule says so.
 
 ## Report format
 
@@ -99,16 +98,3 @@ or thesis, so NOT FOUND for those means "check by hand", not "fake". (Example: "
 You Need" (NeurIPS 2017) is NOT FOUND because Crossref has no record of the original.)
 
 After changing the script, run `python tests/run_tests.py` (live Crossref calls, all must pass).
-
-## Saving to the brain
-
-Save a note **only if both** are true:
-- it feeds a live project (one listed under Active projects in `Brain Root.md`), and
-- depth was standard or deep.
-
-Otherwise save nothing. If you're unsure it's worth keeping, it goes in `90 Inbox`.
-
-To save, follow the brain skill's SYNC steps: `next-id RES`, write the note into `30 Research`
-from `00 System/Templates/Research.md` with today's date in `created:`/`updated:`, fill its four
-sections from the report, and add a `## Sources` section listing every source with its URL and
-the date it was opened. Link the project it feeds with `[[Project name]]`.
